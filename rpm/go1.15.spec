@@ -97,26 +97,24 @@
 
 Name:           go1.15
 Version:        1.15.15
-Release:        0
+Release:        1
 Summary:        A compiled, garbage-collected, concurrent programming language
 License:        BSD-3-Clause
 Group:          Development/Languages/Other
 URL:            http://golang.org
 Source:         http://golang.org/dl/go%{version}.src.tar.gz
 Source1:        go-rpmlintrc
-Source4:        README.SUSE
 Source6:        go.gdbinit
 # We have to compile TSAN ourselves. boo#1052528
 Source100:      llvm-%{tsan_commit}.tar.xz
 # PATCH-FIX-UPSTREAM prefer /etc/hosts over DNS when /etc/nsswitch.conf not present boo#1172868 gh#golang/go#35305
 Patch12:        go1.x-prefer-etc-hosts-over-dns.patch
 Patch13:        reproducible.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 # boostrap
 %if %{with gccgo}
-#%%ifnarch s390 s390x
 #BuildRequires:  binutils-gold
-#%%endif
 BuildRequires:  gcc-go >= %{gcc_go_version}
 %else
 # no gcc-go
@@ -128,25 +126,11 @@ Recommends:     %{name}-doc = %{version}
 # Needed to compile compiler-rt/TSAN.
 BuildRequires:  gcc-c++
 %endif
-#BNC#818502 debug edit tool of rpm fails on i586 builds
 BuildRequires:  rpm >= 4.11.1
-# Needed on arm aarch64 to avoid
-# collect2: fatal error: cannot find 'ld'-
-%ifarch %arm aarch64
-BuildRequires:  binutils-gold
-%endif
 Requires(post): update-alternatives
 Requires(postun):update-alternatives
-# Needed on arm aarch64 to avoid
-# collect2: fatal error: cannot find 'ld'-
-%ifarch %arm aarch64
-%if 0%{?is_opensuse}
-Requires:       binutils-gold
-%else
-Recommends:     binutils-gold
-%endif
-%endif
 Requires:       gcc
+
 Provides:       go = %{version}
 Provides:       go-devel = go%{version}
 Provides:       go-devel-static = go%{version}
@@ -200,8 +184,6 @@ Go runtime race detector libraries. Install this package if you wish to use the
 %endif
 %patch -P 13 -p1
 
-cp %{SOURCE4} .
-
 %build
 # Remove the pre-included .sysos, to avoid shipping things we didn't compile
 # (which is against the openSUSE guidelines for packaging).
@@ -232,11 +214,11 @@ export GOARM=6
 export GOARCH=arm
 export GOARM=7
 %endif
-export GOROOT="`pwd`"
+export GOROOT="`pwd`"/go
 export GOROOT_FINAL=%{_libdir}/go/%{go_api}
 export GOBIN="$GOROOT/bin"
 mkdir -p "$GOBIN"
-cd src
+cd "$GOROOT"/src
 HOST_EXTRA_CFLAGS="%{optflags} -Wno-error" ./make.bash -v
 
 cd ../
@@ -265,8 +247,6 @@ ln -s %{_libdir}/go/%{go_api}/contrib/pkg/ %{buildroot}%{_datadir}/go/%{go_api}/
 install -d  %{buildroot}%{_datadir}/go/%{go_api}/contrib/cmd
 install -d  %{buildroot}%{_datadir}/go/%{go_api}/contrib/src
 ln -s %{_datadir}/go/%{go_api}/contrib/src/ %{buildroot}%{_libdir}/go/%{go_api}/contrib/src
-install -Dm644 README.SUSE $GOROOT/contrib/
-ln -s %{_libdir}/go/%{go_api}/contrib/README.SUSE %{buildroot}%{_datadir}/go/%{go_api}/contrib/README.SUSE
 
 # source files for go install, godoc, etc
 install -d %{buildroot}%{_datadir}/go/%{go_api}
@@ -318,7 +298,7 @@ find doc/ misc/ -type f -exec chmod 0644 '{}' +
 rm -rf misc/cgo/test/{_*,*.o,*.out,*.6,*.8}
 # prepare go-doc
 mkdir -p %{buildroot}%{_docdir}/go/%{go_api}
-cp -r AUTHORS CONTRIBUTORS CONTRIBUTING.md LICENSE PATENTS README.md README.SUSE %{buildroot}%{_docdir}/go/%{go_api}
+cp -r AUTHORS CONTRIBUTORS CONTRIBUTING.md LICENSE PATENTS README.md %{buildroot}%{_docdir}/go/%{go_api}
 cp -r doc/* %{buildroot}%{_docdir}/go/%{go_api}
 
 %fdupes -s %{buildroot}%{_prefix}
@@ -354,7 +334,6 @@ fi
 %doc %{_docdir}/go/%{go_api}/CONTRIBUTING.md
 %doc %{_docdir}/go/%{go_api}/PATENTS
 %doc %{_docdir}/go/%{go_api}/README.md
-%doc %{_docdir}/go/%{go_api}/README.SUSE
 %if 0%{?suse_version} < 1500
 %doc %{_docdir}/go/%{go_api}/LICENSE
 %else

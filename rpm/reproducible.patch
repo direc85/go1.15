@@ -1,4 +1,4 @@
-Date: 2024-04-15
+Date: Wed, 17 Apr 2024 08:55:00
 Author: Bernhard M. Wiedemann <bmwiedemann suse de>
 
 Workaround variations in build results between -j1 and -j4 builds.
