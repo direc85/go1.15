@@ -101,8 +101,8 @@ Release:        1
 Summary:        A compiled, garbage-collected, concurrent programming language
 License:        BSD-3-Clause
 Group:          Development/Languages/Other
-URL:            http://golang.org
-Source:         http://golang.org/dl/go%{version}.src.tar.gz
+URL:            https://github.com/sailfishos-mirror/go/
+Source0:        %{name}-%{version}.tar.xz
 Source1:        go-rpmlintrc
 Source6:        go.gdbinit
 # We have to compile TSAN ourselves. boo#1052528
@@ -176,11 +176,11 @@ Go runtime race detector libraries. Install this package if you wish to use the
 %setup -q -T -b 100 -n llvm-%{tsan_commit}
 %endif
 # go
-%setup -q -n go
+%setup -q -n %{name}-%{version}
+pushd go
 %patch -P 12 -p1
-%if %{with gccgo}
-%endif
 %patch -P 13 -p1
+popd
 
 %build
 # Remove the pre-included .sysos, to avoid shipping things we didn't compile
