@@ -127,8 +127,6 @@ Recommends:     %{name}-doc = %{version}
 BuildRequires:  gcc-c++
 %endif
 BuildRequires:  rpm >= 4.11.1
-Requires(post): update-alternatives
-Requires(postun):update-alternatives
 Requires:       gcc
 
 Provides:       go = %{version}
@@ -281,16 +279,6 @@ sed -i "s/lib/lib64/" $GOROOT/bin/gdbinit.d/go.gdb
 sed -i "s/\$go_api/%{go_api}/" $GOROOT/bin/gdbinit.d/go.gdb
 %endif
 
-# update-alternatives
- mkdir -p %{buildroot}%{_sysconfdir}/alternatives
- mkdir -p %{buildroot}%{_bindir}
- mkdir -p %{buildroot}%{_sysconfdir}/profile.d
- mkdir -p %{buildroot}%{_sysconfdir}/gdbinit.d
- touch %{buildroot}%{_sysconfdir}/alternatives/{go,gofmt,go.gdb}
- ln -sf %{_sysconfdir}/alternatives/go %{buildroot}%{_bindir}/go
- ln -sf %{_sysconfdir}/alternatives/gofmt %{buildroot}%{_bindir}/gofmt
- ln -sf %{_sysconfdir}/alternatives/go.gdb %{buildroot}%{_sysconfdir}/gdbinit.d/go.gdb
-
 # documentation and examples
 # fix documetation permissions (rpmlint warning)
 find doc/ misc/ -type f -exec chmod 0644 '{}' +
@@ -302,18 +290,6 @@ cp -r AUTHORS CONTRIBUTORS CONTRIBUTING.md LICENSE PATENTS README.md %{buildroot
 cp -r doc/* %{buildroot}%{_docdir}/go/%{go_api}
 
 %fdupes -s %{buildroot}%{_prefix}
-
-%post
-
-update-alternatives \
-  --install %{_bindir}/go go %{_libdir}/go/%{go_api}/bin/go $((20+$(echo %{go_api} | cut -d. -f2))) \
-  --slave %{_bindir}/gofmt gofmt %{_libdir}/go/%{go_api}/bin/gofmt \
-  --slave %{_sysconfdir}/gdbinit.d/go.gdb go.gdb %{_libdir}/go/%{go_api}/bin/gdbinit.d/go.gdb
-
-%postun
-if [ $1 -eq 0 ] ; then
-	update-alternatives --remove go %{_libdir}/go/%{go_api}/bin/go
-fi
 
 %files
 %{_bindir}/go
