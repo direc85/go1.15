@@ -1,17 +1,21 @@
-Date: Wed, 17 Apr 2024 08:55:00
-Author: Bernhard M. Wiedemann <bmwiedemann suse de>
-
-Workaround variations in build results between -j1 and -j4 builds.
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Bernhard M. Wiedemann <bmwiedemann@suse.de>
+Date: Thu, 17 Oct 2024 17:14:24 +0300
+Subject: [PATCH] Workaround variations in build results between -j1 and -j4
+ builds.
 
 Compilation time on 4-core VM increases from 211 to 322 seconds,
 while 1-core VM remains at 519 s.
- 
-This patch applies to go1.15, go1.14 and go1.13 packages.
 
-Index: go/src/make.bash
-===================================================================
---- go.orig/src/make.bash
-+++ go/src/make.bash
+This patch applies to go1.15, go1.14 and go1.13 packages.
+---
+ src/make.bash | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/make.bash b/src/make.bash
+index 880a0f43d5..55bbc37fb4 100755
+--- a/src/make.bash
++++ b/src/make.bash
 @@ -209,7 +209,7 @@ fi
  # Run dist bootstrap to complete make.bash.
  # Bootstrap installs a proper cmd/dist, built with the new toolchain.
