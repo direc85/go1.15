@@ -266,13 +266,13 @@ find lib -type f -exec install -D -m644 {} $GOROOT/{} \;
 mkdir -p $GOROOT/bin
 # remove bootstrap
 rm -rf pkg/bootstrap
-mv pkg $GOROOT
-mv bin/* $GOROOT/bin
+cp -r pkg $GOROOT
+cp bin/* $GOROOT/bin/
 mkdir -p $GOROOT/misc/trace
-mv misc/trace/* $GOROOT/misc/trace
+cp misc/trace/* $GOROOT/misc/trace
 # add wasm (Web Assembly) boo#1139210
 mkdir -p $GOROOT/misc/wasm
-mv misc/wasm/* $GOROOT/misc/wasm
+cp misc/wasm/* $GOROOT/misc/wasm
 rm -f %{buildroot}%{_bindir}/{hgpatch,quietgcc}
 
 # gdbinit
