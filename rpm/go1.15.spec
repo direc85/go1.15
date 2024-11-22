@@ -129,6 +129,9 @@ BuildRequires:  gcc-c++
 BuildRequires:  rpm >= 4.11.1
 Requires:       gcc
 
+# BusyBox xargs doesn't support '-d'
+BuildRequires:  gnu-findutils
+
 Provides:       go = %{version}
 Provides:       go-devel = go%{version}
 Provides:       go-devel-static = go%{version}
