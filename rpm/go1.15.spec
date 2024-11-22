@@ -276,11 +276,11 @@ cp misc/wasm/* $GOROOT/misc/wasm
 rm -f %{buildroot}%{_bindir}/{hgpatch,quietgcc}
 
 # gdbinit
-install -Dm644 %{SOURCE6} $GOROOT/bin/gdbinit.d/go.gdb
-%if "%{_lib}" == "lib64"
-sed -i "s/lib/lib64/" $GOROOT/bin/gdbinit.d/go.gdb
-sed -i "s/\$go_api/%{go_api}/" $GOROOT/bin/gdbinit.d/go.gdb
-%endif
+#install -Dm644 %{SOURCE6} $GOROOT/bin/gdbinit.d/go.gdb
+#%if "%{_lib}" == "lib64"
+#sed -i "s/lib/lib64/" $GOROOT/bin/gdbinit.d/go.gdb
+#sed -i "s/\$go_api/%{go_api}/" $GOROOT/bin/gdbinit.d/go.gdb
+#%endif
 
 # documentation and examples
 # fix documetation permissions (rpmlint warning)
@@ -295,17 +295,17 @@ cp -r doc/* %{buildroot}%{_docdir}/go/%{go_api}
 %fdupes -s %{buildroot}%{_prefix}
 
 %files
-%{_bindir}/go
-%{_bindir}/gofmt
+#%{_bindir}/go
+#%{_bindir}/gofmt
 %dir %{_libdir}/go
 %{_libdir}/go/%{go_api}
 %dir %{_datadir}/go
 %{_datadir}/go/%{go_api}
-%dir %{_sysconfdir}/gdbinit.d/
-%config %{_sysconfdir}/gdbinit.d/go.gdb
-%ghost %{_sysconfdir}/alternatives/go
-%ghost %{_sysconfdir}/alternatives/gofmt
-%ghost %{_sysconfdir}/alternatives/go.gdb
+#%dir %{_sysconfdir}/gdbinit.d/
+#%config %{_sysconfdir}/gdbinit.d/go.gdb
+#%ghost %{_sysconfdir}/alternatives/go
+#%ghost %{_sysconfdir}/alternatives/gofmt
+#%ghost %{_sysconfdir}/alternatives/go.gdb
 %dir %{_docdir}/go
 %dir %{_docdir}/go/%{go_api}
 %doc %{_docdir}/go/%{go_api}/AUTHORS
